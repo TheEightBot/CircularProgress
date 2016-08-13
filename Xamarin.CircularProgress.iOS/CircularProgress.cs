@@ -164,9 +164,9 @@ namespace Xamarin.CircularProgress.iOS
 		}
 
 		/**
-			Create `KYCircularProgress` with progress guide.
+			Create `CircularProgress` with progress guide.
 
-			- parameter frame: `KYCircularProgress` frame.
+			- parameter frame: `CircularProgress` frame.
 			- parameter showProgressGuide: If you set to `true`, progress guide view is enabled.
 		*/
 
@@ -183,18 +183,18 @@ namespace Xamarin.CircularProgress.iOS
 			progressView.ShapeLayer.Path = Path.CGPath;
 			progressView.ShapeLayer.LineWidth = (nfloat)LineWidth;
 			progressView.ShapeLayer.StrokeColor = TintColor.CGColor;
-			//TODO: how do I pass 'layer' in?
-			gradientLayer = new CAGradientLayer();
+
+			gradientLayer = new CAGradientLayer(); //TODO: how do I pass 'layer' in?
 			gradientLayer.Frame = progressView.Frame;
 			gradientLayer.StartPoint = new CGPoint(0, 0.5);
 			gradientLayer.EndPoint = new CGPoint(1, 0.5);
 			gradientLayer.Mask = progressView.ShapeLayer;
 
-			List<CGColor> defaultColors = new List<CGColor> {
-					RgbaColor(rgba: 0x9ACDE7FF).CGColor,
-					RgbaColor(rgba: 0xE7A5C9FF).CGColor,
-
-				};
+			List<CGColor> defaultColors = new List<CGColor> 
+			{
+				RgbaColor(rgba: 0x9ACDE7FF).CGColor,
+				RgbaColor(rgba: 0xE7A5C9FF).CGColor
+			};
 
 			gradientLayer.Colors = Colors ?? defaultColors.ToArray();
 
@@ -227,6 +227,7 @@ namespace Xamarin.CircularProgress.iOS
 		private void UpdateColors(CGColor[] colors)
 		{
 			List<CGColor> convertedColors = new List<CGColor>();
+
 			if (colors != null)
 			{
 				foreach (var color in colors)
@@ -240,10 +241,10 @@ namespace Xamarin.CircularProgress.iOS
 			}
 			else 
 			{
-				List<CGColor> defaultColors = new List<CGColor> { 
+				List<CGColor> defaultColors = new List<CGColor>
+				{
 					RgbaColor(rgba: 0x9ACDE7FF).CGColor,
-				    RgbaColor(rgba: 0xE7A5C9FF).CGColor,
-					                           
+					RgbaColor(rgba: 0xE7A5C9FF).CGColor
 				};
 
 				convertedColors = defaultColors;
@@ -251,7 +252,6 @@ namespace Xamarin.CircularProgress.iOS
 
 			gradientLayer.Colors = convertedColors.ToArray();
 		}
-
 
 		public UIColor RgbaColor(Int64 rgba)
 		{
@@ -261,9 +261,7 @@ namespace Xamarin.CircularProgress.iOS
 			var alpha = (nfloat)(rgba & 0x000000FF) / 255.0;
 
 			return new UIColor((nfloat)red, (nfloat)green, (nfloat)blue, (nfloat)alpha);
-
-		}
-
+		} 
 	}
 	 
 	public class CircularShapeView : UIView
@@ -281,41 +279,30 @@ namespace Xamarin.CircularProgress.iOS
 			set { _endAngle = value; }
 		}
 
-		static Class layerClass;
-
-		[Export("initWithCoder:")]
-		public CircularShapeView (NSCoder coder) : base(coder)
-		{
-
-		}
-
-		public CircularShapeView(RectangleF frame) : base (frame)
-		{
-			UpdateProgress(0);
-		}
-
+		static Class layerClass; 
 		public static Class LayerClass
 		{
 			[Export("layerClass")]
-			get
-			{
-				return layerClass = layerClass ?? new Class(typeof(CAShapeLayer));
-			}
+			get { return layerClass = layerClass ?? new Class(typeof(CAShapeLayer)); }
 		}
- 
+
 		public CAShapeLayer ShapeLayer
 		{
-			get
-			{
-				return (CAShapeLayer)Layer;
-			}
+			get { return (CAShapeLayer)Layer; }
 		}
  		
+		[Export("initWithCoder:")]
+		public CircularShapeView(NSCoder coder) : base(coder) { }
+
+		public CircularShapeView(RectangleF frame) : base(frame)
+		{
+			UpdateProgress(0);
+		} 
+
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
-
-			// TODO: investigate warning  
+			 
 			if (StartAngle == EndAngle)
 				EndAngle = StartAngle + (Math.PI * 2);
 
@@ -339,8 +326,6 @@ namespace Xamarin.CircularProgress.iOS
 			ShapeLayer.StrokeEnd = (nfloat)progress;
 			CATransaction.Commit();
 		}
-	}
-
- 
+	} 
 }
 
