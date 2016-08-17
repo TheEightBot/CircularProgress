@@ -29,9 +29,9 @@ namespace Xamarin.CircularProgress.Example
 			ConfigureFourColorCircularProgress();
 
 			//NSTimer.scheduledTimerWithTimeInterval(0.03, target: self, selector: #selector(ViewController.updateProgress), userInfo: nil, repeats: true)
-			NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.1), delegate
+			NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.03), delegate
 			{
-				UpdateProgress();
+				UpdateProgress(); 
 			});
 		}
 
@@ -39,7 +39,7 @@ namespace Xamarin.CircularProgress.Example
 		{
 			var frame = new CGRect(0, 0, 200, 200);
 		 
-			fourColorCircularProgress = new iOS.CircularProgress(frame, true);
+			fourColorCircularProgress = new iOS.CircularProgress(frame);
  
 			fourColorCircularProgress.Colors = new List<CGColor> { 
 				ColorExtension.RgbaColor(0xA6E39D11).CGColor,
@@ -53,11 +53,13 @@ namespace Xamarin.CircularProgress.Example
 
 		private void UpdateProgress()
 		{
-			progress = progress &+ 1;
-			Debug.WriteLine("{0}", progress);
+			progress = progress + 1; 
 			var normalizedProgress = (double)(progress / 255.0);  
 
-			fourColorCircularProgress.Progress = normalizedProgress; 
+			fourColorCircularProgress.Progress = normalizedProgress;
+
+			if (normalizedProgress >= 1)
+				progress = 0;
 		} 
 
 		public override void DidReceiveMemoryWarning()

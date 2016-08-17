@@ -114,10 +114,6 @@
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="CircularShapeView.cs" />
-    <Compile Include="CircularShapeView.designer.cs">
-      <DependentUpon>CircularShapeView.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.CircularProgress.iOS\Xamarin.CircularProgress.iOS.csproj">

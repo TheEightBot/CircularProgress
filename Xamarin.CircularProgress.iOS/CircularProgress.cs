@@ -52,7 +52,7 @@ namespace Xamarin.CircularProgress.iOS
 				var clipProgress = Math.Max(Math.Min(_progress, 1.0), 0.0);
 				progressView.UpdateProgress(clipProgress); 
 
-				ProgressChangedAction(clipProgress, (CircularProgress)this);
+				//ProgressChangedAction(clipProgress, (CircularProgress)this);
 			}
 		}
 		/**
@@ -181,6 +181,10 @@ namespace Xamarin.CircularProgress.iOS
 			- parameter frame: `CircularProgress` frame.
 			- parameter showProgressGuide: If you set to `true`, progress guide view is enabled.
 		*/
+		public CircularProgress(CGRect frame) : base(frame)
+		{
+			ConfigureProgressLayer();
+		}
 
 		public CircularProgress(CGRect frame, bool showProgressGuide) :base(frame)
 		{ 
@@ -197,19 +201,21 @@ namespace Xamarin.CircularProgress.iOS
 			progressView.ShapeLayer.LineWidth = (nfloat)LineWidth;
 			progressView.ShapeLayer.StrokeColor = TintColor.CGColor;
 
-			gradientLayer = new CAGradientLayer(); //TODO: how do I pass 'layer' in?
+			gradientLayer = new CAGradientLayer();
 			gradientLayer.Frame = progressView.Frame;
 			gradientLayer.StartPoint = new CGPoint(0, 0.5);
 			gradientLayer.EndPoint = new CGPoint(1, 0.5);
 			gradientLayer.Mask = progressView.ShapeLayer;
 
-			List<CGColor> defaultColors = new List<CGColor> 
+			Debug.WriteLine("{0}",progressView.ShapeLayer);
+
+			CGColor[] defaultColors = new [] 
 			{
 				ColorExtension.RgbaColor(rgba: 0x9ACDE7FF).CGColor,
 				ColorExtension.RgbaColor(rgba: 0xE7A5C9FF).CGColor
 			};
 
-			gradientLayer.Colors = Colors ?? defaultColors.ToArray();
+			gradientLayer.Colors = Colors ?? defaultColors;
 
 			Layer.AddSublayer(gradientLayer);
 
@@ -302,8 +308,9 @@ namespace Xamarin.CircularProgress.iOS
 		public CircularShapeView(RectangleF frame) : base(frame)
 		{
 			UpdateProgress(0);
-		} 
+		}
 
+	
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
@@ -311,7 +318,8 @@ namespace Xamarin.CircularProgress.iOS
 			if (StartAngle == EndAngle)
 				EndAngle = StartAngle + (Math.PI * 2);
 
-			ShapeLayer.Path = ShapeLayer.Path ?? LayoutPath().CGPath;
+			ShapeLayer.Path = LayoutPath().CGPath;
+			 
 		}
 
 		private UIBezierPath LayoutPath() 
