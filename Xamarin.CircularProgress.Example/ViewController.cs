@@ -4,14 +4,16 @@ using UIKit;
 using CoreGraphics;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Foundation;
 
 namespace Xamarin.CircularProgress.Example
 {
 	public partial class ViewController : UIViewController
 	{
 		private iOS.CircularProgress fourColorCircularProgress;
+
 		private uint progress = 0;
-		UIView _view;
+	 
 
 		protected ViewController(IntPtr handle) : base(handle)
 		{
@@ -23,23 +25,22 @@ namespace Xamarin.CircularProgress.Example
 			base.ViewDidLoad();
 			// Perform any additional setup after loading the view, typically from a nib.\
 
-			_view = new UIView
-			{
-	 
-				Frame = new CGRect(0,0,100,100)
-			};
-
-			View.AddSubview(_view);
+			 
 			ConfigureFourColorCircularProgress();
 
+			//NSTimer.scheduledTimerWithTimeInterval(0.03, target: self, selector: #selector(ViewController.updateProgress), userInfo: nil, repeats: true)
+			NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.1), delegate
+			{
+				UpdateProgress();
+			});
 		}
 
 		private void ConfigureFourColorCircularProgress()
 		{
-			var frame = new CGRect(0, 0, _view.Frame.Width, _view.Frame.Height);
-			Debug.WriteLine("frame created");
+			var frame = new CGRect(0, 0, 200, 200);
+		 
 			fourColorCircularProgress = new iOS.CircularProgress(frame, true);
-			Debug.WriteLine("four color circular progress created");
+ 
 			fourColorCircularProgress.Colors = new List<CGColor> { 
 				ColorExtension.RgbaColor(0xA6E39D11).CGColor,
 			    ColorExtension.RgbaColor(0xAEC1E355).CGColor,
@@ -47,13 +48,13 @@ namespace Xamarin.CircularProgress.Example
 				ColorExtension.RgbaColor(0xF3C0ABFF).CGColor
 			}.ToArray();
 
-			_view.AddSubview(fourColorCircularProgress);
+			View.AddSubview(fourColorCircularProgress);
 		}
 
-		private void updateProgress()
+		private void UpdateProgress()
 		{
-			progress = progress + 1;
-
+			progress = progress &+ 1;
+			Debug.WriteLine("{0}", progress);
 			var normalizedProgress = (double)(progress / 255.0);  
 
 			fourColorCircularProgress.Progress = normalizedProgress; 

@@ -10,11 +10,15 @@ using CoreFoundation;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Xamarin.CircularProgress.iOS
 {
 	public class CircularProgress : UIView
 	{
+
+		Action<double, CircularProgress> ProgressChangedAction;
+
 		/**
 			Main progress view.
 		*/
@@ -46,9 +50,9 @@ namespace Xamarin.CircularProgress.iOS
 				_progress = value;
 
 				var clipProgress = Math.Max(Math.Min(_progress, 1.0), 0.0);
-				progressView.UpdateProgress(clipProgress);
+				progressView.UpdateProgress(clipProgress); 
 
-				//TODO: progressChangedClosure
+				ProgressChangedAction(clipProgress, (CircularProgress)this);
 			}
 		}
 		/**
@@ -117,11 +121,14 @@ namespace Xamarin.CircularProgress.iOS
 			{
 				_path = value;
 
+				Debug.WriteLine("{0}", _path);
+
 				progressView.ShapeLayer.Path = _path.CGPath;
 				progressGuideView.ShapeLayer.Path = _path.CGPath;
 
 			}
 		}
+
 		/**
 			Progress bar colors. You can set many colors in `colors` property, and it makes gradation color in `colors`.
 		*/
@@ -132,7 +139,7 @@ namespace Xamarin.CircularProgress.iOS
 			set
 			{
 				_colors = value;
-				//TODO: UpdateColors(_colors);
+				UpdateColors(_colors);
 			}
 		}
 
@@ -161,6 +168,11 @@ namespace Xamarin.CircularProgress.iOS
 				LayoutIfNeeded();
 				ConfigureProgressGuideLayer(_showProgressGuide);
 			}
+		}
+
+		public void ProgressChangedClosure(Action<double, CircularProgress> completion)
+		{
+			ProgressChangedAction = completion;
 		}
 
 		/**
