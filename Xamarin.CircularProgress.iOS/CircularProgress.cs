@@ -109,7 +109,7 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Progress bar path. You can create various type of progress bar.
 		*/
-		private UIBezierPath _path;
+		private UIBezierPath _path = new UIBezierPath();
 		public UIBezierPath Path 
 		{
 			get { return _path; }
@@ -180,7 +180,8 @@ namespace Xamarin.CircularProgress.iOS
 		{
 			progressView = new CircularShapeView((RectangleF)Bounds);
 			progressView.ShapeLayer.FillColor = UIColor.Clear.CGColor;
-			progressView.ShapeLayer.Path = Path.CGPath;
+            progressView.ShapeLayer.Path = Path.CGPath;
+
 			progressView.ShapeLayer.LineWidth = (nfloat)LineWidth;
 			progressView.ShapeLayer.StrokeColor = TintColor.CGColor;
 
@@ -192,8 +193,8 @@ namespace Xamarin.CircularProgress.iOS
 
 			List<CGColor> defaultColors = new List<CGColor> 
 			{
-				RgbaColor(rgba: 0x9ACDE7FF).CGColor,
-				RgbaColor(rgba: 0xE7A5C9FF).CGColor
+				ColorExtension.RgbaColor(rgba: 0x9ACDE7FF).CGColor,
+				ColorExtension.RgbaColor(rgba: 0xE7A5C9FF).CGColor
 			};
 
 			gradientLayer.Colors = Colors ?? defaultColors.ToArray();
@@ -243,8 +244,8 @@ namespace Xamarin.CircularProgress.iOS
 			{
 				List<CGColor> defaultColors = new List<CGColor>
 				{
-					RgbaColor(rgba: 0x9ACDE7FF).CGColor,
-					RgbaColor(rgba: 0xE7A5C9FF).CGColor
+					ColorExtension.RgbaColor(rgba: 0x9ACDE7FF).CGColor,
+					ColorExtension.RgbaColor(rgba: 0xE7A5C9FF).CGColor
 				};
 
 				convertedColors = defaultColors;
@@ -253,15 +254,7 @@ namespace Xamarin.CircularProgress.iOS
 			gradientLayer.Colors = convertedColors.ToArray();
 		}
 
-		public UIColor RgbaColor(Int64 rgba)
-		{
-			var red = (nfloat)((rgba & 0xFF000000) >> 24) / 255.0;
-			var green = (nfloat)((rgba & 0x00FF0000) >> 16) / 255.0;
-			var blue = (nfloat)((rgba & 0x0000FF00) >> 8) / 255.0;
-			var alpha = (nfloat)(rgba & 0x000000FF) / 255.0;
 
-			return new UIColor((nfloat)red, (nfloat)green, (nfloat)blue, (nfloat)alpha);
-		} 
 	}
 	 
 	public class CircularShapeView : UIView
@@ -326,6 +319,19 @@ namespace Xamarin.CircularProgress.iOS
 			ShapeLayer.StrokeEnd = (nfloat)progress;
 			CATransaction.Commit();
 		}
-	} 
+	}
+
+	public static class ColorExtension 
+	{ 
+		public static UIColor RgbaColor(Int64 rgba)
+		{
+			var red = (nfloat)((rgba & 0xFF000000) >> 24) / 255.0;
+			var green = (nfloat)((rgba & 0x00FF0000) >> 16) / 255.0;
+			var blue = (nfloat)((rgba & 0x0000FF00) >> 8) / 255.0;
+			var alpha = (nfloat)(rgba & 0x000000FF) / 255.0;
+
+			return new UIColor((nfloat)red, (nfloat)green, (nfloat)blue, (nfloat)alpha);
+		}
+	}
 }
 
