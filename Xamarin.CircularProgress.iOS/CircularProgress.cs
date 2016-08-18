@@ -50,9 +50,9 @@ namespace Xamarin.CircularProgress.iOS
 				_progress = value;
 
 				var clipProgress = Math.Max(Math.Min(_progress, 1.0), 0.0);
-				progressView.UpdateProgress(clipProgress); 
-
-				//ProgressChangedAction(clipProgress, (CircularProgress)this);
+				progressView.UpdateProgress(clipProgress);
+			 
+				//ProgressChangedAction(clipProgress, this);
 			}
 		}
 		/**
@@ -122,7 +122,9 @@ namespace Xamarin.CircularProgress.iOS
 				_path = value;
 
 				progressView.ShapeLayer.Path = _path.CGPath;
-				progressGuideView.ShapeLayer.Path = _path.CGPath;
+
+				if (progressGuideView != null)
+					progressGuideView.ShapeLayer.Path = _path.CGPath;
 
 			}
 		}
@@ -170,7 +172,7 @@ namespace Xamarin.CircularProgress.iOS
 
 		public void ProgressChangedClosure(Action<double, CircularProgress> completion)
 		{
-			ProgressChangedAction = completion;
+			completion(Progress, this);
 		}
 
 		/**
