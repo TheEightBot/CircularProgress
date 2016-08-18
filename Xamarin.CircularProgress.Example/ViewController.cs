@@ -17,7 +17,9 @@ namespace Xamarin.CircularProgress.Example
 		private iOS.CircularProgress starProgress;
 
 		private uint progress = 0;
-	 
+
+		UILabel textLabel;
+
 
 		protected ViewController(IntPtr handle) : base(handle)
 		{
@@ -43,7 +45,7 @@ namespace Xamarin.CircularProgress.Example
 
 		private void ConfigureStarCircularProgress()
 		{ 
-			var frame = new CGRect(201, 0, 200, 200);
+			var frame = new CGRect(201, 200, 200, 200);
 			starProgress = new iOS.CircularProgress(frame);
 			starProgress.Colors = new[] 
 			{
@@ -69,7 +71,7 @@ namespace Xamarin.CircularProgress.Example
 
 		private void ConfigureHalfCircularProgress() 
 		{
-			var frame = new CGRect(0, 201, View.Frame.Width, View.Frame.Height / 2);
+			var frame = new CGRect(0, 301, View.Frame.Width, View.Frame.Height / 2);
 			halfCircularProgress = new iOS.CircularProgress(frame, true);
 
 			var center = new CGPoint(160, 200);
@@ -86,9 +88,8 @@ namespace Xamarin.CircularProgress.Example
 			};
 
 			halfCircularProgress.LineWidth = 8.0;
-			halfCircularProgress.ProgressGuideColor = new UIColor((nfloat)0.1,(nfloat)0.1,(nfloat)0.1,(nfloat)0.4);
-
-			var textLabel = new UILabel(new CGRect(halfCircularProgress.Frame.X + 120.0, 170.0, 80, 32));
+			halfCircularProgress.ProgressGuideColor = new UIColor((nfloat)0.1,(nfloat)0.1,(nfloat)0.1,(nfloat)0.7);
+			textLabel = new UILabel(new CGRect(halfCircularProgress.Frame.X + 120.0, 170.0, 80, 32));
 			textLabel.TextAlignment = UITextAlignment.Center;
 			textLabel.TextColor = UIColor.Green;
 			textLabel.Font = UIFont.FromName("HelveticaNeue-UltraLight", 20f);
@@ -97,9 +98,9 @@ namespace Xamarin.CircularProgress.Example
 
 			halfCircularProgress.AddSubview(textLabel);
 
+			//TODO: figure this mess out
 			halfCircularProgress.ProgressChangedClosure((double val, iOS.CircularProgress arg2) =>
-			{
- 
+			{ 
 				textLabel.Text = string.Format("{0}%", val);
 			});
 
@@ -132,6 +133,9 @@ namespace Xamarin.CircularProgress.Example
 			fourColorCircularProgress.Progress = normalizedProgress;
 			halfCircularProgress.Progress = normalizedProgress;
 			starProgress.Progress = normalizedProgress;
+
+			// temporary hacky business so that I can feel better about myself
+			textLabel.Text = string.Format("{0}%", (int)(normalizedProgress * 100));
 
 			if (normalizedProgress >= 1)
 				progress = 0;
