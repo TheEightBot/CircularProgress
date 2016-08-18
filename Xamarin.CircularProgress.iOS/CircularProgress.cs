@@ -16,8 +16,7 @@ namespace Xamarin.CircularProgress.iOS
 {
 	public class CircularProgress : UIView
 	{
-
-		Action<double, CircularProgress> ProgressChangedAction;
+		public event EventHandler<ProgressUpdatedEventArgs> ProgressUpdated;
 
 		/**
 			Main progress view.
@@ -51,8 +50,8 @@ namespace Xamarin.CircularProgress.iOS
 
 				var clipProgress = Math.Max(Math.Min(_progress, 1.0), 0.0);
 				progressView.UpdateProgress(clipProgress);
-			 
-				//ProgressChangedAction(clipProgress, this);
+
+				ProgressUpdated?.Invoke(this, new ProgressUpdatedEventArgs(clipProgress));
 			}
 		}
 		/**
@@ -173,11 +172,6 @@ namespace Xamarin.CircularProgress.iOS
 				LayoutIfNeeded();
 				ConfigureProgressGuideLayer(_showProgressGuide);
 			}
-		}
-
-		public void ProgressChangedClosure(Action<double, CircularProgress> completion)
-		{
-			completion(Progress, this);
 		}
 
 		/**
@@ -348,6 +342,21 @@ namespace Xamarin.CircularProgress.iOS
 		}
 	}
 
+
+	public class ProgressUpdatedEventArgs : EventArgs
+	{
+
+		public double Progress
+		{
+			get;
+			private set;
+		}
+
+		public ProgressUpdatedEventArgs(double progress)
+		{
+			Progress = progress;
+		}
+	}
 	public static class ColorExtension 
 	{ 
 		public static UIColor RgbaColor(Int64 rgba)

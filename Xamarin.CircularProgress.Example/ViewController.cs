@@ -98,12 +98,9 @@ namespace Xamarin.CircularProgress.Example
 
 			halfCircularProgress.AddSubview(textLabel);
 
-			//TODO: figure this mess out
-			halfCircularProgress.ProgressChangedClosure((double val, iOS.CircularProgress arg2) =>
-			{ 
-				textLabel.Text = string.Format("{0}%", val);
-			});
-
+			halfCircularProgress.ProgressUpdated += (sender, e) => { 
+				BeginInvokeOnMainThread(() => textLabel.Text = string.Format("{0}%", (int)(e.Progress * 100)));
+			};
 
 			View.AddSubview(halfCircularProgress);
 		}
@@ -136,9 +133,6 @@ namespace Xamarin.CircularProgress.Example
 			fourColorCircularProgress.Progress = normalizedProgress;
 			halfCircularProgress.Progress = normalizedProgress;
 			starProgress.Progress = normalizedProgress;
-
-			// temporary hacky business so that I can feel better about myself
-			textLabel.Text = string.Format("{0}%", (int)(normalizedProgress * 100));
 
 			if (normalizedProgress >= 1)
 				progress = 0;
