@@ -113,6 +113,9 @@ namespace Xamarin.CircularProgress.Example
 			var frame = new CGRect(0, 0, 200, 200);
 
 			fourColorCircularProgress = new iOS.CircularProgress(frame);
+			fourColorCircularProgress.StartAngle = 
+			fourColorCircularProgress.EndAngle = 
+				-90;
 
 			fourColorCircularProgress.Colors = new[] 
 			{ 

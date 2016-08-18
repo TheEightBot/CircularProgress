@@ -64,8 +64,11 @@ namespace Xamarin.CircularProgress.iOS
 			get { return _startAngle; }
 			set {
 				_startAngle = value;
-				progressView.StartAngle = _startAngle;
-				progressGuideView.StartAngle = _startAngle;
+
+				progressView.StartAngle = _startAngle.ToRadians();
+
+				if(progressGuideView != null)
+					progressGuideView.StartAngle = _startAngle.ToRadians();
 			}
 		}
 		/**
@@ -78,8 +81,10 @@ namespace Xamarin.CircularProgress.iOS
 			set
 			{
 				_endAngle = value;
-				progressView.EndAngle = _endAngle;
-				progressGuideView.EndAngle = _endAngle;
+				progressView.EndAngle = _endAngle.ToRadians();
+
+				if (progressGuideView != null)
+					progressGuideView.EndAngle = _endAngle.ToRadians();
 			}
 		}
 		/**
@@ -353,6 +358,18 @@ namespace Xamarin.CircularProgress.iOS
 			var alpha = (nfloat)(rgba & 0x000000FF) / 255.0;
 
 			return new UIColor((nfloat)red, (nfloat)green, (nfloat)blue, (nfloat)alpha);
+		}
+	}
+
+	public static class NumericExtensions { 
+		public static double ToRadians(this double angle)
+		{
+			return Math.PI * angle / 180.0;
+		}
+
+		public static double ToDegrees(this double angle)
+		{
+			return angle * (180.0 / Math.PI);
 		}
 	}
 }
