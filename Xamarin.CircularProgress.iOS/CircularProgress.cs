@@ -113,15 +113,13 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Progress bar path. You can create various type of progress bar.
 		*/
-		private UIBezierPath _path = new UIBezierPath();
+		private UIBezierPath _path;
 		public UIBezierPath Path 
 		{
 			get { return _path; }
 			set 
-			{
+			{ 
 				_path = value;
-
-				Debug.WriteLine("{0}", _path);
 
 				progressView.ShapeLayer.Path = _path.CGPath;
 				progressGuideView.ShapeLayer.Path = _path.CGPath;
@@ -196,7 +194,7 @@ namespace Xamarin.CircularProgress.iOS
 		{
 			progressView = new CircularShapeView((RectangleF)Bounds);
 			progressView.ShapeLayer.FillColor = UIColor.Clear.CGColor;
-            progressView.ShapeLayer.Path = Path.CGPath;
+			progressView.ShapeLayer.Path = (Path != null) ? Path.CGPath : null;
 
 			progressView.ShapeLayer.LineWidth = (nfloat)LineWidth;
 			progressView.ShapeLayer.StrokeColor = TintColor.CGColor;
@@ -288,18 +286,21 @@ namespace Xamarin.CircularProgress.iOS
 		{
 			get { return _endAngle; }
 			set { _endAngle = value; }
-		}
+		} 
 
 		static Class layerClass; 
 		public static Class LayerClass
 		{
 			[Export("layerClass")]
-			get { return layerClass = layerClass ?? new Class(typeof(CAShapeLayer)); }
+			get 
+			{
+				return layerClass = layerClass ?? new Class(typeof(CAShapeLayer)); 
+			}
 		}
-
+		  
 		public CAShapeLayer ShapeLayer
 		{
-			get { return (CAShapeLayer)Layer; }
+			get { return (CAShapeLayer)Layer; } 
 		}
  		
 		[Export("initWithCoder:")]
@@ -308,17 +309,16 @@ namespace Xamarin.CircularProgress.iOS
 		public CircularShapeView(RectangleF frame) : base(frame)
 		{
 			UpdateProgress(0);
-		}
-
+		} 
 	
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
 			 
 			if (StartAngle == EndAngle)
-				EndAngle = StartAngle + (Math.PI * 2);
+				EndAngle = StartAngle + (Math.PI * 2); 
 
-			ShapeLayer.Path = LayoutPath().CGPath;
+			ShapeLayer.Path = ShapeLayer.Path ?? LayoutPath().CGPath;
 			 
 		}
 
