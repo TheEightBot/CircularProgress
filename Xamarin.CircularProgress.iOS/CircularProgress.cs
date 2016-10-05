@@ -199,7 +199,6 @@ namespace Xamarin.CircularProgress.iOS
 			progressView = new CircularShapeView(this.Bounds);
 			progressView.ShapeLayer.FillColor = UIColor.Clear.CGColor;
 			progressView.ShapeLayer.Path = (Path != null) ? Path.CGPath : null;
-
 			progressView.ShapeLayer.LineWidth = (nfloat)LineWidth;
 			progressView.ShapeLayer.StrokeColor = TintColor.CGColor;
 
@@ -309,7 +308,7 @@ namespace Xamarin.CircularProgress.iOS
 
 		public CAShapeLayer ShapeLayer
 		{
-			get { return (CAShapeLayer)Layer; }
+			get { return Layer as CAShapeLayer; }
 		}
 
 		[Export("initWithCoder:")]
@@ -331,17 +330,15 @@ namespace Xamarin.CircularProgress.iOS
 
 			if (ShapeLayer.Path == null || lastFrame != this.Frame)
 			{
-				ShapeLayer.Path?.Dispose();
-				ShapeLayer.Path = null;
 				ShapeLayer.Path = LayoutPath().CGPath;
 			}
 
 			lastFrame = this.Frame;
 		}
 
-		private UIBezierPath LayoutPath()
+		UIBezierPath LayoutPath()
 		{
-			nfloat halfWidth = Frame.Width / 2;
+			nfloat halfWidth = Frame.Width / 2f;
 			var pointMake = new CGPoint(halfWidth, halfWidth);
 			var bezier = new UIBezierPath();
 			bezier.AddArc(pointMake, halfWidth - ShapeLayer.LineWidth, (nfloat)StartAngle, (nfloat)EndAngle, true);
@@ -351,7 +348,12 @@ namespace Xamarin.CircularProgress.iOS
 
 		public void UpdateProgress(double progress)
 		{
+			if (ShapeLayer == null)
+				return;
+
 			CATransaction.Begin();
+			CATransaction.AnimationDuration = 2d;
+			CATransaction.AnimationTimingFunction = CAMediaTimingFunction.FromName(CAMediaTimingFunction.EaseOut);
 			CATransaction.SetValueForKey(NSObject.FromObject(true), CATransaction.DisableActionsKey);
 			ShapeLayer.StrokeEnd = (nfloat)progress;
 			CATransaction.Commit();
@@ -373,6 +375,7 @@ namespace Xamarin.CircularProgress.iOS
 			Progress = progress;
 		}
 	}
+
 	public static class ColorExtension
 	{
 		public static UIColor RgbaColor(Int64 rgba)
@@ -390,12 +393,12 @@ namespace Xamarin.CircularProgress.iOS
 	{
 		public static double ToRadians(this double angle)
 		{
-			return Math.PI * angle / 180.0;
+			return Math.PI * angle / 180.0d;
 		}
 
 		public static double ToDegrees(this double angle)
 		{
-			return angle * (180.0 / Math.PI);
+			return angle * 180.0d / Math.PI;
 		}
 	}
 }
