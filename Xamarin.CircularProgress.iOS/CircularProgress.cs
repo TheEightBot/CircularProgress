@@ -26,26 +26,28 @@ namespace Xamarin.CircularProgress.iOS
 		/**
  			Gradient mask layer of `progressView`.
  		*/
-		private CAGradientLayer gradientLayer;
+		CAGradientLayer gradientLayer;
 
 		/**
     		Guide view of `progressView`.
     	*/
-		private CircularShapeView progressGuideView;
+		CircularShapeView progressGuideView;
 
 		/**
 			Mask layer of `progressGuideView`.
 		*/
-		private CALayer guideLayer;
+		CALayer guideLayer;
 
 		/**
     		Current progress value. (0.0 - 1.0)
     	*/
-		private double _progress;
-		 
-		public double Progress { 
+		double _progress;
+
+		public double Progress
+		{
 			get { return _progress; }
-			set {
+			set
+			{
 				_progress = value;
 
 				var clipProgress = Math.Max(Math.Min(_progress, 1.0), 0.0);
@@ -57,23 +59,24 @@ namespace Xamarin.CircularProgress.iOS
 		/**
     		Progress start angle.
     	*/
-		private double _startAngle = 0.0;
+		double _startAngle = 0.0;
 		public double StartAngle
 		{
 			get { return _startAngle; }
-			set {
+			set
+			{
 				_startAngle = value;
 
 				progressView.StartAngle = _startAngle.ToRadians();
 
-				if(progressGuideView != null)
+				if (progressGuideView != null)
 					progressGuideView.StartAngle = _startAngle.ToRadians();
 			}
 		}
 		/**
     		Progress end angle.
     	*/
-		private double _endAngle = 0.0;
+		double _endAngle = 0.0;
 		public double EndAngle
 		{
 			get { return _endAngle; }
@@ -89,7 +92,7 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Main progress line width.
 		*/
-		private double _lineWidth = 8.0;
+		double _lineWidth = 8.0;
 		public double LineWidth
 		{
 			get { return _lineWidth; }
@@ -103,7 +106,7 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Guide progress line width.
 		*/
-		private double _guideLineWidth = 8.0;
+		double _guideLineWidth = 8.0;
 		public double GuideLineWidth
 		{
 			get { return _guideLineWidth; }
@@ -117,12 +120,12 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Progress bar path. You can create various type of progress bar.
 		*/
-		private UIBezierPath _path;
-		public UIBezierPath Path 
+		UIBezierPath _path;
+		public UIBezierPath Path
 		{
 			get { return _path; }
-			set 
-			{ 
+			set
+			{
 				_path = value;
 
 				progressView.ShapeLayer.Path = _path.CGPath;
@@ -136,8 +139,8 @@ namespace Xamarin.CircularProgress.iOS
 		/**
 			Progress bar colors. You can set many colors in `colors` property, and it makes gradation color in `colors`.
 		*/
-		private CGColor[] _colors;
-		public CGColor[] Colors 
+		CGColor[] _colors;
+		public CGColor[] Colors
 		{
 			get { return _colors; }
 			set
@@ -150,7 +153,7 @@ namespace Xamarin.CircularProgress.iOS
 		/**	
 		  	Progress guide bar color.
     	*/
-		private UIColor _progressGuideColor = new UIColor((nfloat)0.1, (nfloat)0.1, (nfloat)0.1, (nfloat)0.2);
+		UIColor _progressGuideColor = new UIColor((nfloat)0.1, (nfloat)0.1, (nfloat)0.1, (nfloat)0.2);
 		public UIColor ProgressGuideColor
 		{
 			get { return _progressGuideColor; }
@@ -161,8 +164,8 @@ namespace Xamarin.CircularProgress.iOS
 			}
 		}
 
-		private bool _showProgressGuide = false;
-		public bool ShowProgressGuide 
+		bool _showProgressGuide = false;
+		public bool ShowProgressGuide
 		{
 			get { return _showProgressGuide; }
 			set
@@ -185,15 +188,15 @@ namespace Xamarin.CircularProgress.iOS
 			ConfigureProgressLayer();
 		}
 
-		public CircularProgress(CGRect frame, bool showProgressGuide) :base(frame)
-		{ 
+		public CircularProgress(CGRect frame, bool showProgressGuide) : base(frame)
+		{
 			ConfigureProgressLayer();
-			ConfigureProgressGuideLayer(showProgressGuide); 
+			ConfigureProgressGuideLayer(showProgressGuide);
 		}
 
-		private void ConfigureProgressLayer() 
+		void ConfigureProgressLayer()
 		{
-			progressView = new CircularShapeView((RectangleF)Bounds);
+			progressView = new CircularShapeView(this.Bounds);
 			progressView.ShapeLayer.FillColor = UIColor.Clear.CGColor;
 			progressView.ShapeLayer.Path = (Path != null) ? Path.CGPath : null;
 
@@ -206,9 +209,7 @@ namespace Xamarin.CircularProgress.iOS
 			gradientLayer.EndPoint = new CGPoint(1, 0.5);
 			gradientLayer.Mask = progressView.ShapeLayer;
 
-			Debug.WriteLine("{0}",progressView.ShapeLayer);
-
-			CGColor[] defaultColors = new [] 
+			CGColor[] defaultColors = new[]
 			{
 				ColorExtension.RgbaColor(rgba: 0x9ACDE7FF).CGColor,
 				ColorExtension.RgbaColor(rgba: 0xE7A5C9FF).CGColor
@@ -217,14 +218,23 @@ namespace Xamarin.CircularProgress.iOS
 			gradientLayer.Colors = Colors ?? defaultColors;
 
 			Layer.AddSublayer(gradientLayer);
-
 		}
 
-		private void ConfigureProgressGuideLayer(bool showProgressGuide)
+		public override void LayoutSubviews()
 		{
-			if (showProgressGuide && progressGuideView == null) 
+			base.LayoutSubviews();
+
+			progressView.Frame = this.Bounds;
+
+			if (progressGuideView != null)
+				progressGuideView.Frame = Bounds;
+		}
+
+		void ConfigureProgressGuideLayer(bool showProgressGuide)
+		{
+			if (showProgressGuide && progressGuideView == null)
 			{
-				progressGuideView = new CircularShapeView((RectangleF)Bounds);
+				progressGuideView = new CircularShapeView(this.Bounds);
 				progressGuideView.ShapeLayer.FillColor = UIColor.Clear.CGColor;
 				progressGuideView.ShapeLayer.Path = progressView.ShapeLayer.Path;
 				progressGuideView.ShapeLayer.LineWidth = (System.nfloat)GuideLineWidth;
@@ -242,24 +252,21 @@ namespace Xamarin.CircularProgress.iOS
 			}
 		}
 
-		private void UpdateColors(CGColor[] colors)
+		void UpdateColors(CGColor[] colors)
 		{
-			List<CGColor> convertedColors = new List<CGColor>();
+			var convertedColors = new List<CGColor>();
 
 			if (colors != null)
 			{
 				foreach (var color in colors)
-				{
 					convertedColors.Add(color);
-				}
+
 				if (convertedColors.Count == 1)
-				{
 					convertedColors.Add(convertedColors[0]);
-				}
 			}
-			else 
+			else
 			{
-				List<CGColor> defaultColors = new List<CGColor>
+				var defaultColors = new List<CGColor>
 				{
 					ColorExtension.RgbaColor(rgba: 0x9ACDE7FF).CGColor,
 					ColorExtension.RgbaColor(rgba: 0xE7A5C9FF).CGColor
@@ -273,70 +280,79 @@ namespace Xamarin.CircularProgress.iOS
 
 
 	}
-	 
+
 	public class CircularShapeView : UIView
 	{
-		private double _startAngle;
-		public double StartAngle { 
+		double _startAngle;
+		public double StartAngle
+		{
 			get { return _startAngle; }
 			set { _startAngle = value; }
 		}
 
-		private double _endAngle;
+		double _endAngle;
 		public double EndAngle
 		{
 			get { return _endAngle; }
 			set { _endAngle = value; }
-		} 
+		}
 
-		static Class layerClass; 
+		static Class layerClass;
 		public static Class LayerClass
 		{
 			[Export("layerClass")]
-			get 
+			get
 			{
-				return layerClass = layerClass ?? new Class(typeof(CAShapeLayer)); 
+				return layerClass = layerClass ?? new Class(typeof(CAShapeLayer));
 			}
 		}
-		  
+
 		public CAShapeLayer ShapeLayer
 		{
-			get { return (CAShapeLayer)Layer; } 
+			get { return (CAShapeLayer)Layer; }
 		}
- 		
+
 		[Export("initWithCoder:")]
 		public CircularShapeView(NSCoder coder) : base(coder) { }
 
-		public CircularShapeView(RectangleF frame) : base(frame)
+		public CircularShapeView(CGRect frame) : base(frame)
 		{
 			UpdateProgress(0);
-		} 
-	
+		}
+
+		CGRect lastFrame;
+
 		public override void LayoutSubviews()
 		{
 			base.LayoutSubviews();
-			 
-			if (StartAngle == EndAngle)
-				EndAngle = StartAngle + (Math.PI * 2); 
 
-			ShapeLayer.Path = ShapeLayer.Path ?? LayoutPath().CGPath;
-			 
+			if (StartAngle == EndAngle)
+				EndAngle = StartAngle + (Math.PI * 2);
+
+			if (ShapeLayer.Path == null || lastFrame != this.Frame)
+			{
+				ShapeLayer.Path?.Dispose();
+				ShapeLayer.Path = null;
+				ShapeLayer.Path = LayoutPath().CGPath;
+			}
+
+			lastFrame = this.Frame;
 		}
 
-		private UIBezierPath LayoutPath() 
+		private UIBezierPath LayoutPath()
 		{
 			nfloat halfWidth = Frame.Width / 2;
-			CGPoint pointMake = new CGPoint(halfWidth, halfWidth);
-			UIBezierPath bezier = new UIBezierPath();
+			var pointMake = new CGPoint(halfWidth, halfWidth);
+			var bezier = new UIBezierPath();
 			bezier.AddArc(pointMake, halfWidth - ShapeLayer.LineWidth, (nfloat)StartAngle, (nfloat)EndAngle, true);
 
-			return bezier; 
+			return bezier;
 		}
 
 		public void UpdateProgress(double progress)
-		{ 
+		{
 			CATransaction.Begin();
-			CATransaction.SetValueForKey(new NSNumber(true), CATransaction.DisableActionsKey);
+			CATransaction.SetValueForKey(NSObject.FromObject(true), CATransaction.DisableActionsKey);
 			ShapeLayer.StrokeEnd = (nfloat)progress;
 			CATransaction.Commit();
 		}
@@ -357,8 +373,8 @@ namespace Xamarin.CircularProgress.iOS
 			Progress = progress;
 		}
 	}
-	public static class ColorExtension 
-	{ 
+	public static class ColorExtension
+	{
 		public static UIColor RgbaColor(Int64 rgba)
 		{
 			var red = (nfloat)((rgba & 0xFF000000) >> 24) / 255.0;
@@ -370,7 +386,8 @@ namespace Xamarin.CircularProgress.iOS
 		}
 	}
 
-	public static class NumericExtensions { 
+	public static class NumericExtensions
+	{
 		public static double ToRadians(this double angle)
 		{
 			return Math.PI * angle / 180.0;
