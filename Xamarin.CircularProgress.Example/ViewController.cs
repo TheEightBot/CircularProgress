@@ -10,11 +10,8 @@ namespace Xamarin.CircularProgress.Example
 {
 	public partial class ViewController : UIViewController
 	{
-		private iOS.CircularProgress fourColorCircularProgress;
 
 		private iOS.CircularProgress halfCircularProgress;
-
-		private iOS.CircularProgress starProgress;
 
 		private uint progress = 0;
 
@@ -32,9 +29,18 @@ namespace Xamarin.CircularProgress.Example
 			// Perform any additional setup after loading the view, typically from a nib.\
 
 
-			ConfigureFourColorCircularProgress();
+			//ConfigureFourColorCircularProgress();
 			ConfigureHalfCircularProgress();
-			ConfigureStarCircularProgress();
+			//ConfigureStarCircularProgress();
+
+			this.View.AddConstraints(
+				new NSLayoutConstraint[] {
+					NSLayoutConstraint.Create(halfCircularProgress, NSLayoutAttribute.CenterX, NSLayoutRelation.Equal, this.View, NSLayoutAttribute.CenterX, 1f, 0f),
+					NSLayoutConstraint.Create(halfCircularProgress, NSLayoutAttribute.CenterY, NSLayoutRelation.Equal, this.View, NSLayoutAttribute.CenterY, 1f, 0f),
+					NSLayoutConstraint.Create(halfCircularProgress, NSLayoutAttribute.Width, NSLayoutRelation.Equal, 1f, 200f),
+					NSLayoutConstraint.Create(halfCircularProgress, NSLayoutAttribute.Height, NSLayoutRelation.Equal, 1f, 200f)
+				}
+			);
 
 			//NSTimer.scheduledTimerWithTimeInterval(0.03, target: self, selector: #selector(ViewController.updateProgress), userInfo: nil, repeats: true)
 			NSTimer.CreateRepeatingScheduledTimer(TimeSpan.FromSeconds(0.03), delegate
@@ -43,31 +49,31 @@ namespace Xamarin.CircularProgress.Example
 			});
 		}
 
-		private void ConfigureStarCircularProgress()
-		{ 
-			var frame = new CGRect(201, 200, 200, 200);
-			starProgress = new iOS.CircularProgress(frame);
-			starProgress.Colors = new[] 
-			{
-				UIColor.Purple.CGColor, 
-				ColorExtension.RgbaColor(0xFFF77A55).CGColor,
-		        UIColor.Orange.CGColor
-			};
+		//private void ConfigureStarCircularProgress()
+		//{ 
+		//	var frame = new CGRect(201, 200, 200, 200);
+		//	starProgress = new iOS.CircularProgress(frame);
+		//	starProgress.Colors = new[] 
+		//	{
+		//		UIColor.Purple.CGColor, 
+		//		ColorExtension.RgbaColor(0xFFF77A55).CGColor,
+		//        UIColor.Orange.CGColor
+		//	};
 
-			starProgress.LineWidth = 3.0;
+		//	starProgress.LineWidth = 3.0;
 
-			var path = new UIBezierPath();
-			path.MoveTo(new CGPoint(50.0, 2.0));
-			path.AddLineTo(new CGPoint(84.0, 86.0));
-			path.AddLineTo(new CGPoint(6.0, 33.0));
-			path.AddLineTo(new CGPoint(96.0, 33.0));
-			path.AddLineTo(new CGPoint(17.0, 86.0));
-			path.ClosePath();
-			starProgress.Path = path;
+		//	var path = new UIBezierPath();
+		//	path.MoveTo(new CGPoint(50.0, 2.0));
+		//	path.AddLineTo(new CGPoint(84.0, 86.0));
+		//	path.AddLineTo(new CGPoint(6.0, 33.0));
+		//	path.AddLineTo(new CGPoint(96.0, 33.0));
+		//	path.AddLineTo(new CGPoint(17.0, 86.0));
+		//	path.ClosePath();
+		//	starProgress.Path = path;
 
 
-			View.AddSubview(starProgress);
-		}
+		//	View.AddSubview(starProgress);
+		//}
 
 		private void ConfigureHalfCircularProgress() 
 		{
@@ -102,37 +108,40 @@ namespace Xamarin.CircularProgress.Example
 				BeginInvokeOnMainThread(() => textLabel.Text = string.Format("{0}%", (int)(e.Progress * 100)));
 			};
 
+			halfCircularProgress.TranslatesAutoresizingMaskIntoConstraints = false;
+
 			View.AddSubview(halfCircularProgress);
+
+
 		}
 
-		private void ConfigureFourColorCircularProgress()
-		{
-			var frame = new CGRect(0, 0, 200, 200);
+		//private void ConfigureFourColorCircularProgress()
+		//{
+		//	var frame = new CGRect(0, 0, 200, 200);
 
-			fourColorCircularProgress = new iOS.CircularProgress(frame);
-			fourColorCircularProgress.StartAngle = 
-			fourColorCircularProgress.EndAngle = 
-				-90;
+		//	fourColorCircularProgress = new iOS.CircularProgress(frame);
+		//	fourColorCircularProgress.StartAngle = 270;
+		//	fourColorCircularProgress.EndAngle = 270 + 360;
 
-			fourColorCircularProgress.Colors = new[] 
-			{ 
-				ColorExtension.RgbaColor(0xA6E39D11).CGColor,
-				ColorExtension.RgbaColor(0xAEC1E355).CGColor,
-				ColorExtension.RgbaColor(0xAEC1E3AA).CGColor,
-				ColorExtension.RgbaColor(0xF3C0ABFF).CGColor
-			};
+		//	fourColorCircularProgress.Colors = new[] 
+		//	{ 
+		//		ColorExtension.RgbaColor(0xA6E39D11).CGColor,
+		//		ColorExtension.RgbaColor(0xAEC1E355).CGColor,
+		//		ColorExtension.RgbaColor(0xAEC1E3AA).CGColor,
+		//		ColorExtension.RgbaColor(0xF3C0ABFF).CGColor
+		//	};
  
-			View.AddSubview(fourColorCircularProgress);
-		}
+		//	View.AddSubview(fourColorCircularProgress);
+		//}
 
 		private void UpdateProgress()
 		{
 			progress = progress + 1; 
 			var normalizedProgress = (double)(progress / 255.0);  
 
-			fourColorCircularProgress.Progress = normalizedProgress;
+			//fourColorCircularProgress.Progress = normalizedProgress;
 			halfCircularProgress.Progress = normalizedProgress;
-			starProgress.Progress = normalizedProgress;
+			//starProgress.Progress = normalizedProgress;
 
 			if (normalizedProgress >= 1)
 				progress = 0;
